@@ -1,42 +1,29 @@
-const express = require('express');
-const path = require('path');
-const favicon = require('serve-favicon');
-const logger = require('morgan');
+const express = require('express')
+const morgan = require('morgan')
+const favicon = require('serve-favicon')
+const path = require('path')
+require('dotenv').config()
+require('./config/database')
 
-const app = express();
+const app = express()
+const PORT = process.env.PORT || 3001;
 
-app.use(logger('dev'));
-app.use(express.json());
-// Configure both serve-favicon & static middleware
-// to serve from the production 'build' folder
-app.use(favicon(path.join(__dirname, 'build', 'favicon.ico')));
-app.use(express.static(path.join(__dirname, 'build')));
-// Configure to use port 3001 instead of 3000 during
-// development to avoid collision with React's dev server
-const port = process.env.PORT || 3001;
+// middleware
+app.use(morgan('dev'))
+app.use(express.json())
+app.use(favicon(path.join(__dirname, 'build', 'favicon.ico')))
+app.use(express.static(path.join(__dirname, 'build')))
 
-app.listen(port, function() {
-  console.log(`Express app running on port ${port}`)
-});
+// API Routes
+app.use('/api/users', require('./routes/api/users'))
 
-app.use(express.static(path.join(__dirname, 'build')));
 
-// Put API routes here, before the "catch all" route
-app.post('/orders', (req, res) =>{
-    //post orders
+// Catch All to serve the production app
+app.get('/*', (req, res) => {
+    res.send(path.join(__dirname, 'build', 'index.html'))
 })
-app.post('/orders/new', (req, res) =>{
-    //create the new order in db
-    
-    
-)}
 
 
-
-
-// Put API routes above, before the "catch all" route
-// The following "catch all" route (note the *) is necessary
-// to return the index.html on all non-AJAX requests
-app.get('/*', function(req, res) {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
+app.listen(PORT, () => {
+    console.log(`Server running on port: ${PORT}`);
+})
