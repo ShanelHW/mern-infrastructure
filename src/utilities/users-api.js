@@ -24,7 +24,7 @@ export async function signUp(userData) {
 export async function login(userData) {
   // Fetch uses an options object as a second arg to make requests
   // other than basic GET requests, include data, headers, etc.
-  const res = await fetch(BASE_URL, {
+  const res = await fetch(BASE_URL+'/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     // Fetch requires data payloads to be stringified
